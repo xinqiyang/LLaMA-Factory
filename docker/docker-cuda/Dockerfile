@@ -30,6 +30,7 @@ RUN pip uninstall -y transformer-engine flash-attn && \
         pip install --no-cache-dir flash-attn --no-build-isolation; \
     fi
 
+RUN pip install vllm
 # Copy the rest of the application into the image
 COPY . /app
 
