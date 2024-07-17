@@ -1,7 +1,7 @@
 services:
-  llamafactory:
+  llamafactoryjupyter:
     build:
-      dockerfile: ./docker/docker-cuda/Dockerfile
+      dockerfile: ./docker/docker-cuda-jupyter/Dockerfile
       context: ../..
       args:
         INSTALL_BNB: false
@@ -9,19 +9,30 @@ services:
         INSTALL_DEEPSPEED: false
         INSTALL_FLASHATTN: false
         PIP_INDEX: https://pypi.org/simple
-    container_name: llamafactory
+    container_name: llamafactoryjupyter
+    environment:
+      GRANT_SUDO: "yes"
+      JUPYTER_ENABLE_LAB: "yes"
+      JUPYTER_TOKEN: "Train2024"
     volumes:
       - ../../hf_cache:/root/.cache/huggingface
       - ../../ms_cache:/root/.cache/modelscope
       - ../../data:/app/data
+      - ../../dev:/app/dev
       - ../../output:/app/output
     ports:
-      - "7860:7860"
-      - "8000:8000"
+      - "3860:7860"
+      - "3100:8000"
+      - "3101:8888"
     ipc: host
     tty: true
     stdin_open: true
-    command: bash
+    entrypoint: >
+      jupyter-lab 
+      --allow-root
+      --ip=0.0.0.0
+      --port=8888
+      --config=/app/jupyter_notebook_config.json 
     deploy:
       resources:
         reservations:
